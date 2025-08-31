@@ -1,12 +1,18 @@
 <?php
 
-use function Livewire\Volt\{state};
+use function Livewire\Volt\{state, rules};
 use App\Models\Memo;
 
 state(['title', 'body']);
 
+rules([
+    'title' => 'required|string|max:50',
+    'body' => 'required|string|max:2000',
+]);
+
 // メモを保存する関数
-$store = function() {
+$store = function () {
+    $this->validate();
     Memo::create([
         'title' => $this->title,
         'body' => $this->body,
@@ -21,11 +27,19 @@ $store = function() {
     <h1>新規登録</h1>
     <form wire:submit="store">
         <p>
-            <label for="title">タイトル</label><br>
+            <label for="title">タイトル</label>
+            @error('title')
+                <spam class="error">({{ $message }})</spam>
+            @enderror
+            <br>
             <input type="text" wire:model="title" id="title">
         </p>
         <p>
-            <label for="body">本文</label><br>
+            <label for="body">本文</label>
+            @error('body')
+                <spam class="error">({{ $message }})</spam>
+            @enderror
+            <br>
             <textarea wire:model="body" id="body"></textarea>
         </p>
         <button type="submit">登録</button>
